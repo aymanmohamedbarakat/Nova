@@ -1,0 +1,2 @@
+uvicorn app.main:app --reload  --port 5000 (vs database)
+ngrok http 5000

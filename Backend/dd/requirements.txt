@@ -1,0 +1,7 @@
+fastapi==0.100.0
+uvicorn==0.22.0
+sqlalchemy==2.0.20
+pymysql==1.1.0
+
+
+# run pip install -r requirements.txt to install the dependencies
