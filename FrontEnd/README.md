@@ -24,7 +24,7 @@ set up
     axios
       .get(url, {
         headers: {
-          Authorization: "Api-Key 5LsdmOAM.pigVZJZsSGA0iXvU4RbySf5F4aBpqbtj",
+          Authorization: "Api-Key URT5mgMr.QpgVAJeLJTCLEJ3BVNKKu66wpNnJXt0v",
         },
       })
       .then((res) => {
