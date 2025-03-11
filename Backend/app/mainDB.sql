@@ -50,7 +50,7 @@ INSERT INTO
 VALUES
     (
         'Link bracelet',
-        530.0,
+        630.0,
         510.0,
         'Male',
         'Gold bracelet designed to match our watch straps.',
