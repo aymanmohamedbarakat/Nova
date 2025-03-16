@@ -1,2 +1,7 @@
 uvicorn app.main:app --reload  --port 5000 (vs database)
 ngrok http 5000
+http://127.0.0.1:5000/products
+
+pip install python-multipart
+
+python.exe -m pip install --upgrade pip

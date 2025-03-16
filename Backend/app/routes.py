@@ -4,7 +4,15 @@ from typing import List, Dict, Any
 from pydantic import BaseModel
 from .database import get_db
 from .models import Product, User, Wishlist, Newsletter
+import shutil # بلبل
+import os # بلبل
+from pathlib import Path # بلبل
+from fastapi import File, UploadFile  # Add this import # بلبل
+import secrets  # Add this import  # بلبل
 
+
+UPLOAD_DIR = Path("static/uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 router = APIRouter()
 
 
@@ -14,7 +22,8 @@ class ProductBase(BaseModel):
     discount_price: float
     category: str
     description: str = None
-    image: str = None
+    image1: str = None# بلبل
+    image2: str = None# بلبل
 
 class ProductResponse(ProductBase):
     id: int
@@ -184,3 +193,30 @@ def create_newsletter(newsletter: NewsletterCreate, db: Session = Depends(get_db
 @router.get("/newsletter", response_model=List[NewsletterResponse], tags=["newsletter"])
 def get_newsletters(db: Session = Depends(get_db)):
     return db.query(Newsletter).all()
+
+
+@router.post("/upload-image", tags=["utils"])
+async def upload_image(file: UploadFile = File(...)):
+    """
+    Upload an image and return the URL path
+    """
+    # Validate file is an image
+    content_type = file.content_type
+    if not content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="File must be an image")
+    
+    # Create a unique filename using a random token
+    file_extension = os.path.splitext(file.filename)[1]
+    unique_filename = f"{secrets.token_hex(8)}{file_extension}"
+    file_path = UPLOAD_DIR / unique_filename
+    
+    # Save the file
+    with file_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Return the URL path that can be stored in the database
+    file_url = f"/static/uploads/{unique_filename}"
+    
+    return {"filename": unique_filename, "url": file_url}
+
+

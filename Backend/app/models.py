@@ -10,8 +10,8 @@ class Product(Base):
     discount_price = Column(Float, nullable=False)
     category = Column(String(50), nullable=False) 
     description = Column(Text)
-    image = Column(String(300))
-
+    image1 = Column(String(300)) # بلبل
+    image2 = Column(String(300)) # بلبل
 class User(Base):
     __tablename__ = "users"
 

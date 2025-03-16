@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+</head>
+<body>
+    <form id="imageUploadForm">
+        <div>
+            <label for="imageFile1">Image 1:</label>
+            <input type="file" id="imageFile1" accept="image/*">
+        </div>
+        <div style="margin-top: 10px;">
+            <label for="imageFile2">Image 2:</label>
+            <input type="file" id="imageFile2" accept="image/*">
+        </div>
+        <button type="submit" style="margin-top: 10px;">Upload Images</button>
+    </form>
+    
+    <div id="uploadResult"></div>
+    
+    <script>
+        document.getElementById('imageUploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput1 = document.getElementById('imageFile1');
+            const fileInput2 = document.getElementById('imageFile2');
+            const file1 = fileInput1.files[0];
+            const file2 = fileInput2.files[0];
+            
+            if (!file1 && !file2) {
+                alert('Please select at least one image');
+                return;
+            }
+            
+            let uploadResults = {};
+            
+            // Upload first image if selected
+            if (file1) {
+                try {
+                    const formData1 = new FormData();
+                    formData1.append('file', file1);
+                    
+                    const response1 = await fetch('/upload-image', {
+                        method: 'POST',
+                        body: formData1
+                    });
+                    
+                    if (!response1.ok) {
+                        throw new Error('Upload of image 1 failed');
+                    }
+                    
+                    const result1 = await response1.json();
+                    uploadResults.image1 = result1;
+                    localStorage.setItem('lastUploadedImageUrl1', result1.url);
+                    
+                } catch (error) {
+                    console.error('Error uploading image 1:', error);
+                    document.getElementById('uploadResult').innerHTML = `<p>Error uploading image 1: ${error.message}</p>`;
+                    return;
+                }
+            }
+            
+            // Upload second image if selected
+            if (file2) {
+                try {
+                    const formData2 = new FormData();
+                    formData2.append('file', file2);
+                    
+                    const response2 = await fetch('/upload-image', {
+                        method: 'POST',
+                        body: formData2
+                    });
+                    
+                    if (!response2.ok) {
+                        throw new Error('Upload of image 2 failed');
+                    }
+                    
+                    const result2 = await response2.json();
+                    uploadResults.image2 = result2;
+                    localStorage.setItem('lastUploadedImageUrl2', result2.url);
+                    
+                } catch (error) {
+                    console.error('Error uploading image 2:', error);
+                    document.getElementById('uploadResult').innerHTML = `<p>Error uploading image 2: ${error.message}</p>`;
+                    return;
+                }
+            }
+            
+            // Display results
+            let resultsHTML = '<p>Upload successful!</p>';
+            
+            if (uploadResults.image1) {
+                resultsHTML += `
+                    <div>
+                        <h3>Image 1</h3>
+                        <p>URL: ${uploadResults.image1.url}</p>
+                        <img src="${uploadResults.image1.url}" style="max-width: 300px">
+                    </div>`;
+            }
+            
+            if (uploadResults.image2) {
+                resultsHTML += `
+                    <div style="margin-top: 20px;">
+                        <h3>Image 2</h3>
+                        <p>URL: ${uploadResults.image2.url}</p>
+                        <img src="${uploadResults.image2.url}" style="max-width: 300px">
+                    </div>`;
+            }
+            
+            document.getElementById('uploadResult').innerHTML = resultsHTML;
+        });
+    </script>
+</body>
+</html>
