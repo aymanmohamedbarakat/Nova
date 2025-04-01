@@ -1,14 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+US+Modern:wght@100..400&display=swap');
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  font-family: "Playwrite US Modern", cursive;
+}
+:root {
+  --gold: #c1b17e;
+  --grey: #f8f9fa;
+  --hover-gold: #826a20;
+  --white: #f7f7f7;
+  --black: #313131;
 }
 
 body,
 #root,
 .App {
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
   width: 100%;
-  min-height: 100dvh;
-
+  height: 100dvh;
 }

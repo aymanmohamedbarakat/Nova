@@ -1,0 +1,16 @@
+#productDetails {
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+  #Details {
+    #stars {
+      color: #fdcf00;
+    }
+    h6 {
+      color: var(--gold);
+      font-weight: bold;
+    }
+  }
+}

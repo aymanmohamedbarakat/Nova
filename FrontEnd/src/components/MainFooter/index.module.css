@@ -1,0 +1,21 @@
+#footer {
+    p{
+        color: var(--gold);
+    }
+  #links {
+    h3 {
+      font-size: clamp(0.5rem, 5vw, 1rem);
+    }
+    ul li a {
+      font-size: clamp(0.5rem, 5vw, 1rem);
+      color: var(--gold);
+    }
+  }
+  #Newsletter {
+    input {
+      &::placeholder {
+        color: aliceblue;
+      }
+    }
+  }
+}

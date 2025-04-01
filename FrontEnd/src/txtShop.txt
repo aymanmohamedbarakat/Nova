@@ -1,0 +1,2549 @@
+// import React, { useState, useEffect } from "react";
+// import { ChevronDown, Search, ShoppingCart } from "lucide-react";
+
+// export default function ShopCategories() {
+//   // State for products and pagination
+//   const [products, setProducts] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   // Filter states
+//   const [category, setCategory] = useState("female"); // Default to female products
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [productsPerPage, setProductsPerPage] = useState(9);
+//   const [totalProducts, setTotalProducts] = useState(0);
+//   const [sortBy, setSortBy] = useState("price");
+//   const [priceRange, setPriceRange] = useState({ min: 0, max: 3000 });
+//   const [searchQuery, setSearchQuery] = useState("");
+
+//   // Calculate total pages
+//   const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+//   // Fetch products from API
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       setLoading(true);
+//       try {
+//         // Build the API URL with query parameters
+//         let url = `http://127.0.0.1:5000/products?category=${category}`;
+
+//         // Add pagination
+//         url += `&page=${currentPage}&limit=${productsPerPage}`;
+
+//         // Add sorting
+//         if (sortBy) {
+//           url += `&sort=${sortBy}`;
+//         }
+
+//         // Add price range if set
+//         if (priceRange.min > 0 || priceRange.max < 3000) {
+//           url += `&min_price=${priceRange.min}&max_price=${priceRange.max}`;
+//         }
+
+//         // Add search query if any
+//         if (searchQuery) {
+//           url += `&search=${encodeURIComponent(searchQuery)}`;
+//         }
+
+//         const response = await fetch(url);
+
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+
+//         const data = await response.json();
+//         setProducts(data.products || []);
+//         setTotalProducts(data.total || 0);
+//       } catch (err) {
+//         setError(err.message);
+//         console.error("Error fetching products:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchProducts();
+//   }, [category, currentPage, productsPerPage, sortBy, priceRange, searchQuery]);
+
+//   // Handle category change
+//   const handleCategoryChange = (newCategory) => {
+//     setCategory(newCategory);
+//     setCurrentPage(1); // Reset to first page when changing category
+//   };
+
+//   // Handle page change
+//   const handlePageChange = (page) => {
+//     setCurrentPage(page);
+//     window.scrollTo(0, 0); // Scroll to top when changing page
+//   };
+
+//   // Handle products per page change
+//   const handleProductsPerPageChange = (event) => {
+//     setProductsPerPage(parseInt(event.target.value));
+//     setCurrentPage(1); // Reset to first page when changing items per page
+//   };
+
+//   // Handle sort change
+//   const handleSortChange = (event) => {
+//     setSortBy(event.target.value);
+//   };
+
+//   // Handle price range change
+//   const handlePriceRangeChange = (min, max) => {
+//     setPriceRange({ min, max });
+//     setCurrentPage(1); // Reset to first page when changing price range
+//   };
+
+//   // Handle search
+//   const handleSearch = (e) => {
+//     if (e.key === "Enter") {
+//       setSearchQuery(e.target.value);
+//       setCurrentPage(1); // Reset to first page when searching
+//     }
+//   };
+
+//   return (
+//     <div className="bg-white">
+//       <div className="container-fluid p-0">
+//         {/* Header */}
+//         <header
+//           className="fixed-top bg-white shadow-sm"
+//           style={{ maxWidth: "1440px", margin: "0 auto" }}
+//         >
+//           <div className="container-fluid py-3">
+//             <div className="row align-items-center">
+//               <div className="col-md-3">
+//                 <img
+//                   className="img-fluid"
+//                   style={{ maxHeight: "135px", transition: "all 0.5s ease" }}
+//                   alt="NOVA Logo"
+//                   src=""
+//                 />
+//               </div>
+
+//               <div className="col-md-6">
+//                 <nav className="d-flex justify-content-center">
+//                   <a
+//                     href="#"
+//                     className="text-decoration-none mx-3"
+//                     style={{
+//                       color: "#c1b17e",
+//                       fontSize: "22px",
+//                       fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       transition: "all 0.2s ease",
+//                     }}
+//                   >
+//                     Home
+//                   </a>
+//                   <a
+//                     href="#"
+//                     className="text-decoration-none mx-3 position-relative"
+//                     style={{
+//                       color: "#826a20",
+//                       fontSize: "22px",
+//                       fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                     }}
+//                   >
+//                     Shop
+//                     <div
+//                       style={{
+//                         width: "58px",
+//                         height: "0.5px",
+//                         backgroundColor: "#826a20",
+//                         position: "absolute",
+//                         bottom: "-10px",
+//                         left: "0",
+//                       }}
+//                     ></div>
+//                   </a>
+//                   <a
+//                     href="#"
+//                     className="text-decoration-none mx-3"
+//                     style={{
+//                       color: "#c1b17e",
+//                       fontSize: "22px",
+//                       fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       transition: "all 0.2s ease",
+//                     }}
+//                   >
+//                     About
+//                   </a>
+//                   <a
+//                     href="#"
+//                     className="text-decoration-none mx-3"
+//                     style={{
+//                       color: "#c1b17e",
+//                       fontSize: "22px",
+//                       fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       transition: "all 0.2s ease",
+//                     }}
+//                   >
+//                     Contact
+//                   </a>
+//                 </nav>
+//               </div>
+
+//               <div className="col-md-3">
+//                 <div className="d-flex align-items-center justify-content-end">
+//                   <div
+//                     className="position-relative me-3"
+//                     style={{ width: "271px" }}
+//                   >
+//                     <input
+//                       className="form-control rounded-pill shadow"
+//                       style={{
+//                         backgroundColor: "#d9d9d9",
+//                         height: "39px",
+//                         paddingLeft: "2rem",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                         color: "#c1b17e",
+//                       }}
+//                       placeholder="search"
+//                       onKeyDown={handleSearch}
+//                     />
+//                     <Search
+//                       className="position-absolute"
+//                       style={{
+//                         top: "9px",
+//                         right: "12px",
+//                         width: "20px",
+//                         height: "20px",
+//                         color: "#808080",
+//                       }}
+//                     />
+//                   </div>
+//                   <button className="btn">
+//                     <ShoppingCart
+//                       style={{
+//                         width: "25px",
+//                         height: "25px",
+//                         transition: "all 0.4s ease",
+//                         color: "black",
+//                       }}
+//                     />
+//                   </button>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </header>
+
+//         {/* Main Content */}
+//         <main style={{ marginTop: "120px" }}>
+//           {/* Breadcrumb */}
+//           <div className="bg-light py-3">
+//             <div className="container">
+//               <nav aria-label="breadcrumb">
+//                 <ol className="breadcrumb mb-0">
+//                   <li className="breadcrumb-item">
+//                     <a
+//                       href="#"
+//                       style={{
+//                         color: "black",
+//                         fontSize: "1.25rem",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                         transition: "all 0.2s ease",
+//                       }}
+//                     >
+//                       Home
+//                     </a>
+//                   </li>
+//                   <li className="breadcrumb-item">
+//                     <a
+//                       href="#"
+//                       onClick={() =>
+//                         handleCategoryChange(
+//                           category === "male" ? "female" : "male"
+//                         )
+//                       }
+//                       style={{
+//                         color: "black",
+//                         fontSize: "1.25rem",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                         transition: "all 0.2s ease",
+//                       }}
+//                     >
+//                       {category === "female" ? "Women" : "Men"}
+//                     </a>
+//                   </li>
+//                   <li className="breadcrumb-item active" aria-current="page">
+//                     <span
+//                       style={{
+//                         color: "#d1b45a",
+//                         fontSize: "1.25rem",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Accessories
+//                     </span>
+//                   </li>
+//                 </ol>
+//               </nav>
+//             </div>
+//           </div>
+
+//           <div className="container-fluid">
+//             <div className="row">
+//               {/* Sidebar */}
+//               <aside
+//                 className="col-md-3 p-4"
+//                 style={{ backgroundColor: "rgba(241, 241, 241, 0.4)" }}
+//               >
+//                 <h2
+//                   style={{
+//                     color: "black",
+//                     fontSize: "32px",
+//                     fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                     marginBottom: "1.5rem",
+//                   }}
+//                 >
+//                   SHOP BY
+//                 </h2>
+
+//                 <h3
+//                   style={{
+//                     color: "#303030",
+//                     fontSize: "1.25rem",
+//                     fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                     marginBottom: "1rem",
+//                   }}
+//                 >
+//                   SHOPPING OPTIONS
+//                 </h3>
+
+//                 {/* Category filter */}
+//                 <div className="accordion mb-3" id="categoryAccordion">
+//                   <div className="accordion-item border-0 bg-transparent">
+//                     <h2 className="accordion-header" id="headingCategory">
+//                       <button
+//                         className="accordion-button collapsed bg-transparent"
+//                         type="button"
+//                         data-bs-toggle="collapse"
+//                         data-bs-target="#collapseCategory"
+//                         aria-expanded="false"
+//                         aria-controls="collapseCategory"
+//                         style={{
+//                           color: "#515151",
+//                           fontSize: "1.25rem",
+//                           fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                         }}
+//                       >
+//                         CATEGORY
+//                       </button>
+//                     </h2>
+//                     <div
+//                       id="collapseCategory"
+//                       className="accordion-collapse collapse"
+//                       aria-labelledby="headingCategory"
+//                       data-bs-parent="#categoryAccordion"
+//                     >
+//                       <div className="accordion-body">
+//                         <div className="mb-2">
+//                           <div className="form-check">
+//                             <input
+//                               className="form-check-input"
+//                               type="radio"
+//                               id="female"
+//                               name="category"
+//                               checked={category === "female"}
+//                               onChange={() => handleCategoryChange("female")}
+//                             />
+//                             <label
+//                               className="form-check-label"
+//                               htmlFor="female"
+//                               style={{ color: "#515151" }}
+//                             >
+//                               Women
+//                             </label>
+//                           </div>
+//                         </div>
+//                         <div>
+//                           <div className="form-check">
+//                             <input
+//                               className="form-check-input"
+//                               type="radio"
+//                               id="male"
+//                               name="category"
+//                               checked={category === "male"}
+//                               onChange={() => handleCategoryChange("male")}
+//                             />
+//                             <label
+//                               className="form-check-label"
+//                               htmlFor="male"
+//                               style={{ color: "#515151" }}
+//                             >
+//                               Men
+//                             </label>
+//                           </div>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 {/* Price filter */}
+//                 <div className="accordion" id="priceAccordion">
+//                   <div className="accordion-item border-0 bg-transparent">
+//                     <h2 className="accordion-header" id="headingPrice">
+//                       <button
+//                         className="accordion-button collapsed bg-transparent"
+//                         type="button"
+//                         data-bs-toggle="collapse"
+//                         data-bs-target="#collapsePrice"
+//                         aria-expanded="false"
+//                         aria-controls="collapsePrice"
+//                         style={{
+//                           color: "#515151",
+//                           fontSize: "1.25rem",
+//                           fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                         }}
+//                       >
+//                         PRICE
+//                       </button>
+//                     </h2>
+//                     <div
+//                       id="collapsePrice"
+//                       className="accordion-collapse collapse"
+//                       aria-labelledby="headingPrice"
+//                       data-bs-parent="#priceAccordion"
+//                     >
+//                       <div className="accordion-body">
+//                         <div className="row mb-3">
+//                           <div className="col-5">
+//                             <input
+//                               type="number"
+//                               className="form-control"
+//                               value={priceRange.min}
+//                               onChange={(e) =>
+//                                 setPriceRange({
+//                                   ...priceRange,
+//                                   min: parseInt(e.target.value) || 0,
+//                                 })
+//                               }
+//                               placeholder="Min"
+//                             />
+//                           </div>
+//                           <div className="col-2 text-center">
+//                             <span>-</span>
+//                           </div>
+//                           <div className="col-5">
+//                             <input
+//                               type="number"
+//                               className="form-control"
+//                               value={priceRange.max}
+//                               onChange={(e) =>
+//                                 setPriceRange({
+//                                   ...priceRange,
+//                                   max: parseInt(e.target.value) || 3000,
+//                                 })
+//                               }
+//                               placeholder="Max"
+//                             />
+//                           </div>
+//                         </div>
+//                         <button
+//                           className="btn w-100"
+//                           style={{ backgroundColor: "#c1b17e", color: "white" }}
+//                           onClick={() =>
+//                             handlePriceRangeChange(
+//                               priceRange.min,
+//                               priceRange.max
+//                             )
+//                           }
+//                         >
+//                           Apply
+//                         </button>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </aside>
+
+//               {/* Product Section */}
+//               <div
+//                 className="col-md-9"
+//                 style={{ backgroundColor: "rgba(241, 241, 241, 0.4)" }}
+//               >
+//                 <h1
+//                   className="p-4"
+//                   style={{
+//                     color: "#303030",
+//                     fontSize: "1.25rem",
+//                     fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                   }}
+//                 >
+//                   {category === "female" ? "Women's" : "Men's"} Accessories
+//                 </h1>
+
+//                 {/* Product Toolbar */}
+//                 <div className="bg-light py-3 px-3 d-flex justify-content-between align-items-center">
+//                   <div className="d-flex align-items-center">
+//                     <div className="d-flex me-3">
+//                       <button
+//                         className="btn btn-outline-dark p-0 me-2 d-flex justify-content-center align-items-center"
+//                         style={{
+//                           width: "30px",
+//                           height: "25px",
+//                           borderRadius: "0",
+//                           borderWidth: "0.2px",
+//                         }}
+//                       >
+//                         <img
+//                           className="img-fluid"
+//                           style={{ width: "14px", height: "14px" }}
+//                           alt="Grid view"
+//                           src=""
+//                         />
+//                       </button>
+//                       <button
+//                         className="btn btn-outline-dark p-0 d-flex justify-content-center align-items-center"
+//                         style={{
+//                           width: "30px",
+//                           height: "25px",
+//                           borderRadius: "0",
+//                           borderWidth: "0.2px",
+//                         }}
+//                       >
+//                         <img
+//                           className="img-fluid"
+//                           style={{ width: "16px", height: "16px" }}
+//                           alt="List view"
+//                           src=""
+//                         />
+//                       </button>
+//                     </div>
+//                     <span
+//                       style={{
+//                         color: "#303030",
+//                         fontSize: "13px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       {loading
+//                         ? "Loading..."
+//                         : `Items ${
+//                             (currentPage - 1) * productsPerPage + 1
+//                           }-${Math.min(
+//                             currentPage * productsPerPage,
+//                             totalProducts
+//                           )} of ${totalProducts}`}
+//                     </span>
+//                   </div>
+
+//                   <div className="d-flex align-items-center">
+//                     <span
+//                       className="me-2"
+//                       style={{
+//                         color: "#303030",
+//                         fontSize: "1rem",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Sort By
+//                     </span>
+//                     <select
+//                       className="form-select"
+//                       value={sortBy}
+//                       onChange={handleSortChange}
+//                       style={{
+//                         width: "117px",
+//                         height: "25px",
+//                         backgroundColor: "white",
+//                         border: "0.3px solid black",
+//                         borderRadius: "0",
+//                         fontSize: "10px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       <option value="title">Name</option>
+//                       <option value="price">Price: Low to High</option>
+//                       <option value="-price">Price: High to Low</option>
+//                     </select>
+//                   </div>
+//                 </div>
+
+//                 {/* Product Grid */}
+//                 {loading ? (
+//                   <div
+//                     className="d-flex justify-content-center align-items-center"
+//                     style={{ height: "600px" }}
+//                   >
+//                     <div className="spinner-border text-primary" role="status">
+//                       <span className="visually-hidden">Loading...</span>
+//                     </div>
+//                   </div>
+//                 ) : error ? (
+//                   <div
+//                     className="d-flex justify-content-center align-items-center"
+//                     style={{ height: "600px" }}
+//                   >
+//                     <div
+//                       className="text-danger"
+//                       style={{
+//                         fontSize: "1.25rem",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Error: {error}
+//                     </div>
+//                   </div>
+//                 ) : (
+//                   <div className="container-fluid p-4">
+//                     <div className="row g-4">
+//                       {products.length === 0 ? (
+//                         <div className="col-12 text-center py-5">
+//                           <p
+//                             style={{
+//                               fontSize: "1.125rem",
+//                               fontFamily:
+//                                 "Playwrite_US_Modern-Regular, Helvetica",
+//                             }}
+//                           >
+//                             No products found matching your criteria.
+//                           </p>
+//                         </div>
+//                       ) : (
+//                         products.map((product) => (
+//                           <div key={product.id} className="col-md-4">
+//                             <div className="card border-0">
+//                               <div
+//                                 className="card-img-top bg-light d-flex justify-content-center align-items-center"
+//                                 style={{ height: "251px" }}
+//                               >
+//                                 <img
+//                                   className="img-fluid"
+//                                   style={{
+//                                     maxHeight: "100%",
+//                                     transition: "all 0.5s ease",
+//                                   }}
+//                                   alt={product.title}
+//                                   src={product.image1}
+//                                 />
+//                               </div>
+//                               <div className="card-body p-0 pt-2">
+//                                 <h3
+//                                   style={{
+//                                     fontFamily:
+//                                       "Playwrite_US_Modern-Regular, Helvetica",
+//                                     fontWeight: "normal",
+//                                     color: "black",
+//                                     fontSize: "0.875rem",
+//                                   }}
+//                                 >
+//                                   {product.title}
+//                                 </h3>
+//                                 <div className="d-flex">
+//                                   <span
+//                                     className="me-2"
+//                                     style={{
+//                                       fontFamily:
+//                                         "Playwrite_US_Modern-Regular, Helvetica",
+//                                       fontWeight: "normal",
+//                                       color: "black",
+//                                       fontSize: "10px",
+//                                     }}
+//                                   >
+//                                     ${product.discount_price}
+//                                   </span>
+//                                   {product.price !== product.discount_price && (
+//                                     <span
+//                                       style={{
+//                                         fontFamily:
+//                                           "Playwrite_US_Modern-Regular, Helvetica",
+//                                         fontWeight: "normal",
+//                                         color: "#6c757d",
+//                                         fontSize: "10px",
+//                                         textDecoration: "line-through",
+//                                       }}
+//                                     >
+//                                       ${product.price}
+//                                     </span>
+//                                   )}
+//                                 </div>
+//                               </div>
+//                             </div>
+//                           </div>
+//                         ))
+//                       )}
+//                     </div>
+//                   </div>
+//                 )}
+
+//                 {/* Pagination */}
+//                 <div className="bg-light py-3 px-4 d-flex justify-content-between align-items-center">
+//                   <nav aria-label="Page navigation">
+//                     <ul className="pagination mb-0">
+//                       {currentPage > 1 && (
+//                         <li className="page-item">
+//                           <a
+//                             className="page-link"
+//                             href="#"
+//                             onClick={(e) => {
+//                               e.preventDefault();
+//                               handlePageChange(currentPage - 1);
+//                             }}
+//                             aria-label="Previous"
+//                             style={{
+//                               color: "#303030",
+//                               fontFamily:
+//                                 "Playwrite_US_Modern-Regular, Helvetica",
+//                               fontSize: "10px",
+//                             }}
+//                           >
+//                             <span aria-hidden="true">&laquo;</span>
+//                           </a>
+//                         </li>
+//                       )}
+
+//                       {/* Generate page numbers */}
+//                       {Array.from(
+//                         { length: Math.min(totalPages, 5) },
+//                         (_, i) => {
+//                           // Show pages around current page
+//                           let pageNum;
+//                           if (totalPages <= 5) {
+//                             pageNum = i + 1;
+//                           } else if (currentPage <= 3) {
+//                             pageNum = i + 1;
+//                           } else if (currentPage >= totalPages - 2) {
+//                             pageNum = totalPages - 4 + i;
+//                           } else {
+//                             pageNum = currentPage - 2 + i;
+//                           }
+
+//                           return (
+//                             <li
+//                               key={pageNum}
+//                               className={`page-item ${
+//                                 currentPage === pageNum ? "active" : ""
+//                               }`}
+//                             >
+//                               <a
+//                                 className="page-link"
+//                                 href="#"
+//                                 onClick={(e) => {
+//                                   e.preventDefault();
+//                                   handlePageChange(pageNum);
+//                                 }}
+//                                 style={{
+//                                   color:
+//                                     currentPage === pageNum
+//                                       ? "white"
+//                                       : "#303030",
+//                                   backgroundColor:
+//                                     currentPage === pageNum
+//                                       ? "#b5993b"
+//                                       : "transparent",
+//                                   borderColor:
+//                                     currentPage === pageNum
+//                                       ? "#b5993b"
+//                                       : "#dee2e6",
+//                                   fontFamily:
+//                                     "Playwrite_US_Modern-Regular, Helvetica",
+//                                   fontSize: "10px",
+//                                 }}
+//                               >
+//                                 {pageNum}
+//                               </a>
+//                             </li>
+//                           );
+//                         }
+//                       )}
+
+//                       {currentPage < totalPages && (
+//                         <li className="page-item">
+//                           <a
+//                             className="page-link"
+//                             href="#"
+//                             onClick={(e) => {
+//                               e.preventDefault();
+//                               handlePageChange(currentPage + 1);
+//                             }}
+//                             aria-label="Next"
+//                             style={{
+//                               color: "#303030",
+//                               fontFamily:
+//                                 "Playwrite_US_Modern-Regular, Helvetica",
+//                               fontSize: "10px",
+//                             }}
+//                           >
+//                             <span aria-hidden="true">&raquo;</span>
+//                           </a>
+//                         </li>
+//                       )}
+//                     </ul>
+//                   </nav>
+
+//                   <div className="d-flex align-items-center">
+//                     <span
+//                       className="me-2"
+//                       style={{
+//                         color: "#303030",
+//                         fontSize: "13px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Show
+//                     </span>
+//                     <select
+//                       className="form-select"
+//                       value={productsPerPage}
+//                       onChange={handleProductsPerPageChange}
+//                       style={{
+//                         width: "56px",
+//                         height: "25px",
+//                         backgroundColor: "white",
+//                         border: "0.3px solid black",
+//                         borderRadius: "0",
+//                         fontSize: "10px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       <option value="9">9</option>
+//                       <option value="12">12</option>
+//                       <option value="24">24</option>
+//                     </select>
+//                     <span
+//                       className="ms-2"
+//                       style={{
+//                         color: "#303030",
+//                         fontSize: "10px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       per page
+//                     </span>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </main>
+
+//         {/* Footer */}
+//         <footer className="bg-dark text-white mt-5 py-5">
+//           <div className="container">
+//             <div className="row">
+//               {/* Logo and Info */}
+//               <div className="col-md-6 mb-4 mb-md-0">
+//                 <h2
+//                   style={{
+//                     color: "white",
+//                     fontSize: "4rem",
+//                     letterSpacing: "7.68px",
+//                     fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                     marginBottom: "2rem",
+//                   }}
+//                 >
+//                   NOVA
+//                 </h2>
+//                 <p
+//                   style={{
+//                     color: "#c1b17e",
+//                     fontSize: "1.25rem",
+//                     letterSpacing: "2.4px",
+//                     fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                     marginBottom: "2rem",
+//                   }}
+//                 >
+//                   Our mission is to provide an unparalleled customer experience
+//                   in the fashion industry, ensuring exceptional quality and
+//                   service in every interaction.
+//                 </p>
+
+//                 <div className="mb-3">
+//                   <div className="d-flex mb-2">
+//                     <span
+//                       style={{
+//                         color: "white",
+//                         fontSize: "1.25rem",
+//                         letterSpacing: "2.4px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                         width: "100px",
+//                       }}
+//                     >
+//                       Phone:
+//                     </span>
+//                     <span
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       +222-1800-2628
+//                     </span>
+//                   </div>
+
+//                   <div className="d-flex mb-2">
+//                     <span
+//                       style={{
+//                         color: "white",
+//                         fontSize: "1.25rem",
+//                         letterSpacing: "2.4px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                         width: "100px",
+//                       }}
+//                     >
+//                       Address:
+//                     </span>
+//                     <span
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       502 New Design Str, Melbourne, Australia
+//                     </span>
+//                   </div>
+
+//                   <div className="d-flex">
+//                     <span
+//                       style={{
+//                         color: "white",
+//                         fontSize: "1.25rem",
+//                         letterSpacing: "2.4px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                         width: "100px",
+//                       }}
+//                     >
+//                       Email:
+//                     </span>
+//                     <span
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1.5rem",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       novasite@gmail.com
+//                     </span>
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* Company Links */}
+//               <div className="col-md-3 mb-4 mb-md-0">
+//                 <h3
+//                   style={{
+//                     color: "white",
+//                     fontSize: "1.25rem",
+//                     letterSpacing: "2.4px",
+//                     fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                     marginBottom: "1.5rem",
+//                   }}
+//                 >
+//                   Our Company
+//                 </h3>
+//                 <ul className="list-unstyled">
+//                   <li className="mb-2">
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       About Us
+//                     </a>
+//                   </li>
+//                   <li className="mb-2">
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Our Stores
+//                     </a>
+//                   </li>
+//                   <li className="mb-2">
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Contact Us
+//                     </a>
+//                   </li>
+//                   <li className="mb-2">
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Size Guide
+//                     </a>
+//                   </li>
+//                   <li>
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       My Account
+//                     </a>
+//                   </li>
+//                 </ul>
+//               </div>
+
+//               {/* Customer Service Links */}
+//               <div className="col-md-3">
+//                 <h3
+//                   style={{
+//                     color: "white",
+//                     fontSize: "1.25rem",
+//                     letterSpacing: "2.4px",
+//                     fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                     marginBottom: "1.5rem",
+//                   }}
+//                 >
+//                   Customer Service
+//                 </h3>
+//                 <ul className="list-unstyled">
+//                   <li className="mb-2">
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Privacy Policy
+//                     </a>
+//                   </li>
+//                   <li className="mb-2">
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Theme FAQs
+//                     </a>
+//                   </li>
+//                   <li className="mb-2">
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Refund Policy
+//                     </a>
+//                   </li>
+//                   <li className="mb-2">
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Term & Conditions
+//                     </a>
+//                   </li>
+//                   <li>
+//                     <a
+//                       href="#"
+//                       className="text-decoration-none"
+//                       style={{
+//                         color: "#c1b17e",
+//                         fontSize: "1rem",
+//                         letterSpacing: "1.92px",
+//                         fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                       }}
+//                     >
+//                       Store Locations
+//                     </a>
+//                   </li>
+//                 </ul>
+//               </div>
+//             </div>
+
+//             {/* Newsletter */}
+//             <div className="mt-4 pt-3">
+//               <div className="d-flex align-items-center">
+//                 <input
+//                   className="form-control rounded-pill me-3"
+//                   style={{
+//                     width: "342px",
+//                     height: "48px",
+//                     backgroundColor: "rgba(0, 0, 0, 0.15)",
+//                     color: "white",
+//                     fontSize: "15px",
+//                     fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                   }}
+//                   placeholder="Enter your e-mail"
+//                 />
+//                 <button
+//                   className="btn rounded-pill"
+//                   style={{
+//                     width: "133px",
+//                     height: "48px",
+//                     backgroundColor: "white",
+//                     color: "black",
+//                     fontSize: "1rem",
+//                     fontFamily: "Playwrite_US_Modern-Regular, Helvetica",
+//                     transition: "all 0.2s ease",
+//                   }}
+//                 >
+//                   Subscribe
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         </footer>
+//       </div>
+//     </div>
+//   );
+// }
+
+// import React, { useState, useEffect } from "react";
+// import { Search, ShoppingCart } from "lucide-react";
+// import { Link } from "react-router-dom";
+// import { domain } from "../../store";
+// import styles from "./shop.module.css";
+
+// export default function ShopPage() {
+//   // State for products and pagination
+//   const [products, setProducts] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   // Filter states
+//   const [category, setCategory] = useState("female"); // Default to female products
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [productsPerPage, setProductsPerPage] = useState(9);
+//   const [totalProducts, setTotalProducts] = useState(0);
+//   const [sortBy, setSortBy] = useState("price");
+//   const [priceRange, setPriceRange] = useState({ min: 0, max: 3000 });
+//   const [searchQuery, setSearchQuery] = useState("");
+
+//   // Calculate total pages
+//   const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+//   // Fetch products from API
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       setLoading(true);
+//       try {
+//         // Build the API URL with query parameters
+//         let url = `${domain}/api/products?category=${category}`;
+
+//         // Add pagination
+//         url += `&page=${currentPage}&limit=${productsPerPage}`;
+
+//         // Add sorting
+//         if (sortBy) {
+//           url += `&sort=${sortBy}`;
+//         }
+
+//         // Add price range if set
+//         if (priceRange.min > 0 || priceRange.max < 3000) {
+//           url += `&min_price=${priceRange.min}&max_price=${priceRange.max}`;
+//         }
+
+//         // Add search query if any
+//         if (searchQuery) {
+//           url += `&search=${encodeURIComponent(searchQuery)}`;
+//         }
+
+//         const response = await fetch(url);
+
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+
+//         const data = await response.json();
+//         setProducts(data.products || []);
+//         setTotalProducts(data.total || 0);
+//       } catch (err) {
+//         setError(err.message);
+//         console.error("Error fetching products:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchProducts();
+//   }, [category, currentPage, productsPerPage, sortBy, priceRange, searchQuery]);
+
+//   // Handle category change
+//   const handleCategoryChange = (newCategory) => {
+//     setCategory(newCategory);
+//     setCurrentPage(1); // Reset to first page when changing category
+//   };
+
+//   // Handle page change
+//   const handlePageChange = (page) => {
+//     setCurrentPage(page);
+//     window.scrollTo(0, 0); // Scroll to top when changing page
+//   };
+
+//   // Handle products per page change
+//   const handleProductsPerPageChange = (event) => {
+//     setProductsPerPage(parseInt(event.target.value));
+//     setCurrentPage(1); // Reset to first page when changing items per page
+//   };
+
+//   // Handle sort change
+//   const handleSortChange = (event) => {
+//     setSortBy(event.target.value);
+//   };
+
+//   // Handle price range change
+//   const handlePriceRangeChange = (min, max) => {
+//     setPriceRange({ min, max });
+//     setCurrentPage(1); // Reset to first page when changing price range
+//   };
+
+//   // Handle search
+//   const handleSearch = (e) => {
+//     if (e.key === "Enter") {
+//       setSearchQuery(e.target.value);
+//       setCurrentPage(1); // Reset to first page when searching
+//     }
+//   };
+
+//   return (
+//     <div className="container-fluid p-0 mt-4">
+//       <div className="row">
+//         {/* Sidebar */}
+//         <aside className="col-md-3 p-4 bg-light">
+//           <h2 className="mb-4 fw-bold">SHOP BY</h2>
+
+//           <h3 className="mb-3">SHOPPING OPTIONS</h3>
+
+//           {/* Category filter */}
+//           <div className="accordion mb-3" id="categoryAccordion">
+//             <div className="accordion-item border-0 bg-transparent">
+//               <h2 className="accordion-header" id="headingCategory">
+//                 <button
+//                   className="accordion-button collapsed bg-transparent fw-bold"
+//                   type="button"
+//                   data-bs-toggle="collapse"
+//                   data-bs-target="#collapseCategory"
+//                   aria-expanded="false"
+//                   aria-controls="collapseCategory"
+//                 >
+//                   CATEGORY
+//                 </button>
+//               </h2>
+//               <div
+//                 id="collapseCategory"
+//                 className="accordion-collapse collapse"
+//                 aria-labelledby="headingCategory"
+//                 data-bs-parent="#categoryAccordion"
+//               >
+//                 <div className="accordion-body">
+//                   <div className="mb-2">
+//                     <div className="form-check">
+//                       <input
+//                         className="form-check-input"
+//                         type="radio"
+//                         id="female"
+//                         name="category"
+//                         checked={category === "female"}
+//                         onChange={() => handleCategoryChange("female")}
+//                       />
+//                       <label className="form-check-label" htmlFor="female">
+//                         Women
+//                       </label>
+//                     </div>
+//                   </div>
+//                   <div>
+//                     <div className="form-check">
+//                       <input
+//                         className="form-check-input"
+//                         type="radio"
+//                         id="male"
+//                         name="category"
+//                         checked={category === "male"}
+//                         onChange={() => handleCategoryChange("male")}
+//                       />
+//                       <label className="form-check-label" htmlFor="male">
+//                         Men
+//                       </label>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Price filter */}
+//           <div className="accordion" id="priceAccordion">
+//             <div className="accordion-item border-0 bg-transparent">
+//               <h2 className="accordion-header" id="headingPrice">
+//                 <button
+//                   className="accordion-button collapsed bg-transparent fw-bold"
+//                   type="button"
+//                   data-bs-toggle="collapse"
+//                   data-bs-target="#collapsePrice"
+//                   aria-expanded="false"
+//                   aria-controls="collapsePrice"
+//                 >
+//                   PRICE
+//                 </button>
+//               </h2>
+//               <div
+//                 id="collapsePrice"
+//                 className="accordion-collapse collapse"
+//                 aria-labelledby="headingPrice"
+//                 data-bs-parent="#priceAccordion"
+//               >
+//                 <div className="accordion-body">
+//                   <div className="row mb-3">
+//                     <div className="col-5">
+//                       <input
+//                         type="number"
+//                         className="form-control"
+//                         value={priceRange.min}
+//                         onChange={(e) =>
+//                           setPriceRange({
+//                             ...priceRange,
+//                             min: parseInt(e.target.value) || 0,
+//                           })
+//                         }
+//                         placeholder="Min"
+//                       />
+//                     </div>
+//                     <div className="col-2 text-center">
+//                       <span>-</span>
+//                     </div>
+//                     <div className="col-5">
+//                       <input
+//                         type="number"
+//                         className="form-control"
+//                         value={priceRange.max}
+//                         onChange={(e) =>
+//                           setPriceRange({
+//                             ...priceRange,
+//                             max: parseInt(e.target.value) || 3000,
+//                           })
+//                         }
+//                         placeholder="Max"
+//                       />
+//                     </div>
+//                   </div>
+//                   <button
+//                     className="btn w-100"
+//                     style={{ backgroundColor: "var(--gold)", color: "white" }}
+//                     onClick={() =>
+//                       handlePriceRangeChange(priceRange.min, priceRange.max)
+//                     }
+//                   >
+//                     Apply
+//                   </button>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </aside>
+
+//         {/* Product Section */}
+//         <div className="col-md-9 bg-light">
+//           <h1 className="p-4 fs-4">
+//             {category === "female" ? "Women's" : "Men's"} Accessories
+//           </h1>
+
+//           {/* Product Toolbar */}
+//           <div className="bg-white py-3 px-3 d-flex justify-content-between align-items-center">
+//             <div className="d-flex align-items-center">
+//               <span className="fs-6">
+//                 {loading
+//                   ? "Loading..."
+//                   : `Items ${(currentPage - 1) * productsPerPage + 1}-${Math.min(
+//                       currentPage * productsPerPage,
+//                       totalProducts
+//                     )} of ${totalProducts}`}
+//               </span>
+//             </div>
+
+//             <div className="d-flex align-items-center">
+//               <span className="me-2">Sort By</span>
+//               <select
+//                 className="form-select form-select-sm"
+//                 value={sortBy}
+//                 onChange={handleSortChange}
+//                 style={{ width: "150px" }}
+//               >
+//                 <option value="title">Name</option>
+//                 <option value="price">Price: Low to High</option>
+//                 <option value="-price">Price: High to Low</option>
+//               </select>
+//             </div>
+//           </div>
+
+//           {/* Product Grid */}
+//           {loading ? (
+//             <div className="d-flex justify-content-center align-items-center" style={{ height: "600px" }}>
+//               <div className="spinner-border" style={{ color: "var(--gold)" }} role="status">
+//                 <span className="visually-hidden">Loading...</span>
+//               </div>
+//             </div>
+//           ) : error ? (
+//             <div className="d-flex justify-content-center align-items-center" style={{ height: "600px" }}>
+//               <div className="text-danger">Error: {error}</div>
+//             </div>
+//           ) : (
+//             <div className="container-fluid p-4">
+//               <div className="row g-4">
+//                 {products.length === 0 ? (
+//                   <div className="col-12 text-center py-5">
+//                     <p>No products found matching your criteria.</p>
+//                   </div>
+//                 ) : (
+//                   products.map((product) => (
+//                     <div key={product.id} className="col-md-4">
+//                       <div className="card border-0 h-100">
+//                         <Link to={`/shop/${product.id}`} className="text-decoration-none">
+//                           <div className="card-img-top bg-white d-flex justify-content-center align-items-center" style={{ height: "250px" }}>
+//                             <img
+//                               className="img-fluid"
+//                               style={{ maxHeight: "100%", transition: "all 0.3s ease" }}
+//                               alt={product.title}
+//                               src={product.image1}
+//                             />
+//                           </div>
+//                           <div className="card-body p-3">
+//                             <h3 className="fs-6 text-dark">{product.title}</h3>
+//                             <div className="d-flex">
+//                               <span className="me-2 fw-bold" style={{ color: "var(--gold)" }}>
+//                                 ${product.discount_price}
+//                               </span>
+//                               {product.price !== product.discount_price && (
+//                                 <span className="text-muted text-decoration-line-through">
+//                                   ${product.price}
+//                                 </span>
+//                               )}
+//                             </div>
+//                           </div>
+//                         </Link>
+//                       </div>
+//                     </div>
+//                   ))
+//                 )}
+//               </div>
+//             </div>
+//           )}
+
+//           {/* Pagination */}
+//           {!loading && products.length > 0 && (
+//             <div className="bg-white py-3 px-4 d-flex justify-content-between align-items-center">
+//               <nav aria-label="Page navigation">
+//                 <ul className="pagination mb-0">
+//                   {currentPage > 1 && (
+//                     <li className="page-item">
+//                       <button
+//                         className="page-link"
+//                         onClick={() => handlePageChange(currentPage - 1)}
+//                         aria-label="Previous"
+//                       >
+//                         <span aria-hidden="true">&laquo;</span>
+//                       </button>
+//                     </li>
+//                   )}
+
+//                   {/* Generate page numbers */}
+//                   {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+//                     // Show pages around current page
+//                     let pageNum;
+//                     if (totalPages <= 5) {
+//                       pageNum = i + 1;
+//                     } else if (currentPage <= 3) {
+//                       pageNum = i + 1;
+//                     } else if (currentPage >= totalPages - 2) {
+//                       pageNum = totalPages - 4 + i;
+//                     } else {
+//                       pageNum = currentPage - 2 + i;
+//                     }
+
+//                     return (
+//                       <li
+//                         key={pageNum}
+//                         className={`page-item ${currentPage === pageNum ? "active" : ""}`}
+//                       >
+//                         <button
+//                           className="page-link"
+//                           onClick={() => handlePageChange(pageNum)}
+//                           style={{
+//                             backgroundColor: currentPage === pageNum ? "var(--gold)" : "",
+//                             borderColor: currentPage === pageNum ? "var(--gold)" : "",
+//                           }}
+//                         >
+//                           {pageNum}
+//                         </button>
+//                       </li>
+//                     );
+//                   })}
+
+//                   {currentPage < totalPages && (
+//                     <li className="page-item">
+//                       <button
+//                         className="page-link"
+//                         onClick={() => handlePageChange(currentPage + 1)}
+//                         aria-label="Next"
+//                       >
+//                         <span aria-hidden="true">&raquo;</span>
+//                       </button>
+//                     </li>
+//                   )}
+//                 </ul>
+//               </nav>
+
+//               <div className="d-flex align-items-center">
+//                 <span className="me-2">Show</span>
+//                 <select
+//                   className="form-select form-select-sm"
+//                   value={productsPerPage}
+//                   onChange={handleProductsPerPageChange}
+//                   style={{ width: "60px" }}
+//                 >
+//                   <option value="9">9</option>
+//                   <option value="12">12</option>
+//                   <option value="24">24</option>
+//                 </select>
+//                 <span className="ms-2">per page</span>
+//               </div>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }s
+////////////////////////////////////////////////////////////////////////////////
+// import React, { useEffect, useState } from "react";
+// import styles from "./index.module.css";
+// import ProductCard from "../../components/Shop/ProductCard";
+// import { ShopRepo } from "../../data/repo/ShopRepo";
+// export default function ShopPage() {
+//   const [cats, setCats] = useState([
+//     { id: 1, name: "Male", products: 10 },
+//     { id: 2, name: "Female", products: 20 },
+//   ]);
+//   const [productsTotal, setProductsTotal] = useState(0);
+//   const [productPerPage, setProductPerPage] = useState(5);
+//   const [selectedCategories, setSelectedCategories] = useState([]);
+//   const [activePage, setActivePage] = useState(2);
+//   const [allProducts, setAllProducts] = useState([]);
+//   const [filteredProducts, setFilteredProducts] = useState([]);
+//   // Get Product From Api
+//   //Effects
+//   useEffect(() => {
+//     // ShopRepo.categories_index().then(setCats);
+//     ShopRepo.products_index().then((data) => {
+//       setAllProducts(data);
+//       setFilteredProducts(data);
+//       setProductsTotal(data.length);
+//     });
+//   }, []);
+
+//   useEffect(() => {
+//     if (selectedCategories.length === 0) {
+//       setFilteredProducts(allProducts);
+//       setProductsTotal(allProducts.length);
+//     } else {
+//       const filtered = allProducts.filter((product) =>
+//         selectedCategories.includes(product.category)
+//       );
+//       setFilteredProducts(filtered);
+//       setProductsTotal(filtered.length);
+//     }
+//     }, [selectedCategories, allProducts]);
+
+//   const handleCategoryChange = (categoryName) => {
+//     setSelectedCategories((disapleProduct) => {
+//       if (disapleProduct.includes(categoryName)) {
+//         return disapleProduct.filter((category) => category !== categoryName);
+//       } else {
+//         return [...disapleProduct, categoryName];
+//       }
+//     });
+//   };
+
+//   return (
+//     <>
+//       <div className="container-fluid bg-light-subtle">
+//         <div className="container">
+//           <nav aria-label="breadcrumb">
+//             <ol className="breadcrumb mb-0 py-2">
+//               <li className="breadcrumb-item">
+//                 <a href="#">Home</a>
+//               </li>
+//               <li className="breadcrumb-item">
+//                 <a href="#">Library</a>
+//               </li>
+//               <li className="breadcrumb-item active" aria-current="page">
+//                 Data
+//               </li>
+//             </ol>
+//           </nav>
+//         </div>
+//       </div>
+//       <section className="d-flex col-12 container mt-4">
+//         <div className="col-3">
+//           <div className="accordion" id="accordionExample">
+//             <div className="accordion-item">
+//               <h2 className="accordion-header">
+//                 <button
+//                   className="accordion-button"
+//                   type="button"
+//                   data-bs-toggle="collapse"
+//                   data-bs-target="#collapseOne"
+//                   aria-expanded="true"
+//                   aria-controls="collapseOne"
+//                 >
+//                   Categories
+//                 </button>
+//               </h2>
+//               <div
+//                 id="collapseOne"
+//                 className="accordion-collapse collapse show"
+//                 data-bs-parent="#accordionExample"
+//               >
+//                 <div className="accordion-body gap-2">
+//                   <input
+//                     type="search"
+//                     placeholder="search"
+//                     className="form-control"
+//                   />
+//                   <div className="d-flex flex-column col-12 gap-2 mt-3">
+//                     {cats &&
+//                       Array.isArray(cats) &&
+//                       cats.map((el) => {
+//                         return (
+//                           <label
+//                             key={el.id}
+//                             className="col-12 d-flex gap-2 align-items-center"
+//                           >
+//                             <input
+//                               type="checkbox"
+//                               name=""
+//                               id=""
+//                               checked={selectedCategories.includes(el.name)}
+//                               onChange={() => handleCategoryChange(el.name)}
+//                             />
+//                             <span>{el.name}</span>
+//                             <span className="ms-auto badge bg-secondary">
+//                               {el.products}
+//                             </span>
+//                           </label>
+//                         );
+//                       })}
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//         <div className="col-9 d-flex flex-column p-3">
+//           <div className="d-flex justify-content-between align-items-center mb-4 p-3 bg-light-subtle">
+//             <div className="d-flex align-items-center">
+//               <h3 className="m-0 me-1">Products</h3>
+//               <span className="badge bg-dark rounded-pill fs-6">
+//                 {productsTotal}
+//               </span>
+//             </div>
+//             <div className="d-flex align-items-center ">
+//               <label htmlFor="items-per-page" className="me-2 text-secondary">
+//                 SortBy:
+//               </label>
+//               <select
+//                 id="items-per-page"
+//                 className={"form-select form-select-sm " + styles.select}
+//               >
+//                 <option value="5">5</option>
+//                 <option value="10">10</option>
+//                 <option value="20">20</option>
+//                 <option value="50">50</option>
+//                 <option value="100">100</option>
+//               </select>
+//             </div>
+//           </div>
+
+//           {/**ProductCard */}
+//           <div className="col-12 d-flex flex-wrap">
+//             {filteredProducts  && Array.isArray(filteredProducts ) && filteredProducts .length > 0 ? (
+//               filteredProducts .map((el, index) => {
+//                 console.log("Rendering product:", el);
+//                 return (
+//                   <ProductCard
+//                     key={el.id}
+//                     title={el.title} // Changed from 'name' to 'title'
+//                     price={el.price}
+//                     discount_price={el.discount_price} // Changed from 'salePrice' to 'discount_price'
+//                     imgUrl={el.image1} // Changed from 'coverImg' to 'image1'
+//                   />
+//                 );
+//               })
+//             ) : (
+//               <div className="col-12 text-center py-5">No products found</div>
+//             )}
+//           </div>
+//           {/* Pagination */}
+//           <div className="col-12 my-4 d-flex justify-content-between align-items-center bg-light-subtle">
+//             <nav aria-label="Product pagination">
+//               <ul className="pagination justify-content-center">
+//                 {activePage > 1 && (
+//                   <li className="page-item">
+//                     <a
+//                       className="page-link rounded-start shadow-sm"
+//                       aria-label="Previous"
+//                       onClick={() => setActivePage(activePage - 1)}
+//                     >
+//                       <span aria-hidden="true">&laquo;</span>
+//                     </a>
+//                   </li>
+//                 )}
+//                 {Array(Math.ceil(productsTotal / productPerPage))
+//                   .fill(0)
+//                   .map((el, index) => (
+//                     <li
+//                       key={index}
+//                       onClick={() => setActivePage(index + 1)}
+//                       className={`page-item ${
+//                         activePage == index + 1 ? "active" : null
+//                       }`}
+//                     >
+//                       <a className="page-link shadow-sm" href="#">
+//                         {index + 1}
+//                       </a>
+//                     </li>
+//                   ))}
+
+//                 {activePage < Math.ceil(productsTotal / productPerPage) && (
+//                   <li className="page-item">
+//                     <a
+//                       className="page-link rounded-end shadow-sm"
+//                       aria-label="Next"
+//                       onClick={() => setActivePage(activePage + 1)}
+//                     >
+//                       <span aria-hidden="true">&raquo;</span>
+//                     </a>
+//                   </li>
+//                 )}
+//               </ul>
+//             </nav>
+//             <div className="d-flex align-items-center">
+//               <label htmlFor="items-per-page" className="me-2 text-secondary">
+//                 Show:
+//               </label>
+//               <select
+//                 id="items-per-page"
+//                 className={"form-select form-select-sm " + styles.select}
+//                 onChange={(e) => setProductPerPage(e.target.value)}
+//               >
+//                 <option value="5">5</option>
+//                 <option value="10">10</option>
+//                 <option value="20">20</option>
+//                 <option value="50">50</option>
+//                 <option value="100">100</option>
+//               </select>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+//     </>
+//   );
+// }
+// ********************************************
+//////////////////////////////////////////////////////////////////////////////////
+
+// import React, { useEffect, useState } from "react";
+// import styles from "./index.module.css";
+// import ProductCard from "../../components/Shop/ProductCard";
+// import { ShopRepo } from "../../data/repo/ShopRepo";
+// import { domain } from "../../store";
+
+// export default function ShopPage() {
+//   const [cats, setCats] = useState([
+//     { id: 1, name: "Male", products: 10 },
+//     { id: 2, name: "Female", products: 20 },
+//   ]);
+//   const [productsTotal, setProductsTotal] = useState(0);
+//   const [productPerPage, setProductPerPage] = useState(5);
+//   const [selectedCategories, setSelectedCategories] = useState([]);
+//   const [activePage, setActivePage] = useState(1);
+//   const [allProducts, setAllProducts] = useState([]);
+//   const [filteredProducts, setFilteredProducts] = useState([]);
+
+//   // Get Product From Api
+//   useEffect(() => {
+//     ShopRepo.products_index().then((data) => {
+//       setAllProducts(data);
+//       setFilteredProducts(data);
+//       setProductsTotal(data.length);
+//     });
+//   }, []);
+
+//   useEffect(() => {
+//     if (selectedCategories.length === 0) {
+//       setFilteredProducts(allProducts);
+//       setProductsTotal(allProducts.length);
+//     } else {
+//       const filtered = allProducts.filter((product) =>
+//         selectedCategories.includes(product.category)
+//       );
+//       setFilteredProducts(filtered);
+//       setProductsTotal(filtered.length);
+//     }
+//   }, [selectedCategories, allProducts]);
+
+//   useEffect(() => {
+//     ShopRepo.products_index(activePage, productPerPage).then((res) =>
+//       setAllProducts(res.data)
+//     );
+//   }, [activePage, productPerPage, filters]);
+
+//   const handleCategoryChange = (categoryName) => {
+//     setSelectedCategories((disapleProduct) => {
+//       if (disapleProduct.includes(categoryName)) {
+//         return disapleProduct.filter((category) => category !== categoryName);
+//       } else {
+//         return [...disapleProduct, categoryName];
+//       }
+//     });
+//   };
+
+//   return (
+//     <>
+//       {/* Breadcrumb */}
+//       <div className="container-fluid bg-light-subtle">
+//         <div className="container">
+//           <nav aria-label="breadcrumb">
+//             <ol className="breadcrumb mb-0 py-2">
+//               <li className="breadcrumb-item">
+//                 <a href="#">Home</a>
+//               </li>
+//               <li className="breadcrumb-item">
+//                 <a href="#">Library</a>
+//               </li>
+//               <li className="breadcrumb-item active" aria-current="page">
+//                 Data
+//               </li>
+//             </ol>
+//           </nav>
+//         </div>
+//       </div>
+
+//       {/* Mobile Category Filter */}
+//       <div className="container d-md-none mt-3">
+//         <button
+//           className="btn btn-outline-secondary w-100 d-flex justify-content-between align-items-center"
+//           type="button"
+//           data-bs-toggle="collapse"
+//           data-bs-target="#mobileCategoryFilters"
+//         >
+//           Categories <span>▼</span>
+//         </button>
+//         <div className="collapse mt-2" id="mobileCategoryFilters">
+//           <div className="card card-body">
+//             <input
+//               type="search"
+//               placeholder="Search categories"
+//               className="form-control mb-2"
+//             />
+//             {cats &&
+//               Array.isArray(cats) &&
+//               cats.map((el) => (
+//                 <div
+//                   key={el.id}
+//                   className="form-check d-flex justify-content-between align-items-center mb-2"
+//                 >
+//                   <label className="form-check-label d-flex align-items-center gap-2">
+//                     <input
+//                       type="checkbox"
+//                       className="form-check-input"
+//                       checked={selectedCategories.includes(el.name)}
+//                       onChange={() => handleCategoryChange(el.name)}
+//                     />
+//                     <span>{el.name}</span>
+//                   </label>
+//                   <span className="badge bg-secondary">{el.products}</span>
+//                 </div>
+//               ))}
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Main Content */}
+//       <div className="container mt-4">
+//         <div className="row g-4">
+//           {/* Sidebar - Categories */}
+//           <div className="col-md-3 d-none d-md-block">
+//             <div className="accordion" id="accordionExample">
+//               <div className="accordion-item">
+//                 <h2 className="accordion-header">
+//                   <button
+//                     className="accordion-button"
+//                     type="button"
+//                     data-bs-toggle="collapse"
+//                     data-bs-target="#collapseOne"
+//                     aria-expanded="true"
+//                     aria-controls="collapseOne"
+//                   >
+//                     Categories
+//                   </button>
+//                 </h2>
+//                 <div
+//                   id="collapseOne"
+//                   className="accordion-collapse collapse show"
+//                   data-bs-parent="#accordionExample"
+//                 >
+//                   <div className="accordion-body gap-2">
+//                     <input
+//                       type="search"
+//                       placeholder="search"
+//                       className="form-control"
+//                     />
+//                     <div className="d-flex flex-column col-12 gap-2 mt-3">
+//                       {cats &&
+//                         Array.isArray(cats) &&
+//                         cats.map((el) => {
+//                           return (
+//                             <label
+//                               key={el.id}
+//                               className="col-12 d-flex gap-2 align-items-center"
+//                             >
+//                               <input
+//                                 type="checkbox"
+//                                 checked={selectedCategories.includes(el.name)}
+//                                 onChange={() => handleCategoryChange(el.name)}
+//                               />
+//                               <span>{el.name}</span>
+//                               <span className="ms-auto badge bg-secondary">
+//                                 {el.products}
+//                               </span>
+//                             </label>
+//                           );
+//                         })}
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Products Section */}
+//           <div className="col-md-9">
+//             {/* Products Header */}
+//             <div
+//               className={`${styles.productsHeader} mb-4 p-3 bg-light-subtle`}
+//             >
+//               <div className="d-flex align-items-center gap-3">
+//                 <h3 className="m-0 me-1">Products</h3>
+//                 <span className="badge bg-dark rounded-pill fs-6">
+//                   {productsTotal}
+//                 </span>
+//               </div>
+//               <div className="d-flex align-items-center mt-5 ">
+//                 <label
+//                   htmlFor="sort-by"
+//                   className="me-2 text-secondary d-none d-sm-inline"
+//                 >
+//                   SortBy:
+//                 </label>
+//                 <select
+//                   id="sort-by"
+//                   className={`form-select form-select-sm ${styles.select}`}
+//                 >
+//                   <option value="5">Name</option>
+//                   <option value="10">Price</option>
+//                 </select>
+//               </div>
+//             </div>
+
+//             {/* Products Grid */}
+//             <div className="row g-3">
+//               {filteredProducts &&
+//               Array.isArray(filteredProducts) &&
+//               filteredProducts.length > 0 ? (
+//                 filteredProducts.map((el) => (
+//                   <div key={el.id} className="col-12 col-sm-6 col-lg-4">
+//                     <ProductCard
+//                       title={el.title}
+//                       price={el.price}
+//                       discount_price={el.discount_price}
+//                       imgUrl={el.image1}
+//                     />
+//                   </div>
+//                 ))
+//               ) : (
+//                 <div className="col-12 text-center py-5">No products found</div>
+//               )}
+//             </div>
+
+//             {/* Pagination */}
+//             <div
+//               className={`${styles.paginationContainer} my-4 p-3 bg-light-subtle`}
+//             >
+//               <nav
+//                 aria-label="Product pagination"
+//                 className="d-flex justify-content-center mb-3 mb-md-0"
+//               >
+//                 <ul className="pagination pagination-sm flex-wrap">
+//                   {activePage > 1 && (
+//                     <li className="page-item">
+//                       <a
+//                         className="page-link rounded-start shadow-sm"
+//                         aria-label="Previous"
+//                         onClick={() => setActivePage(activePage - 1)}
+//                         href="#"
+//                       >
+//                         <span aria-hidden="true">&laquo;</span>
+//                       </a>
+//                     </li>
+//                   )}
+//                   {Array(Math.ceil(productsTotal / productPerPage))
+//                     .fill(0)
+//                     .map((el, index) => (
+//                       <li
+//                         key={index}
+//                         className={`page-item ${
+//                           activePage == index + 1 ? "active" : null
+//                         }`}
+//                       >
+//                         <a
+//                           className="page-link shadow-sm"
+//                           href="#"
+//                           onClick={() => setActivePage(index + 1)}
+//                         >
+//                           {index + 1}
+//                         </a>
+//                       </li>
+//                     ))}
+
+//                   {activePage < Math.ceil(productsTotal / productPerPage) && (
+//                     <li className="page-item">
+//                       <a
+//                         className="page-link rounded-end shadow-sm"
+//                         aria-label="Next"
+//                         onClick={() => setActivePage(activePage + 1)}
+//                         href="#"
+//                       >
+//                         <span aria-hidden="true">&raquo;</span>
+//                       </a>
+//                     </li>
+//                   )}
+//                 </ul>
+//               </nav>
+//               <div className={styles.paginationControls}>
+//                 <label htmlFor="items-per-page" className="me-2 text-secondary">
+//                   Show:
+//                 </label>
+//                 <select
+//                   id="items-per-page"
+//                   className={`form-select form-select-sm ${styles.select}`}
+//                   onChange={(e) => setProductPerPage(e.target.value)}
+//                 >
+//                   <option value="5">5</option>
+//                   <option value="10">10</option>
+//                   <option value="20">20</option>
+//                   <option value="50">50</option>
+//                   <option value="100">100</option>
+//                 </select>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+
+
+// import React, { useEffect, useState } from "react";
+// import styles from "./index.module.css";
+// import ProductCard from "../../components/Shop/ProductCard";
+// import { Link } from "react-router-dom";
+// import {
+//   Home,
+//   ChevronRight,
+//   ShoppingBag,
+//   Filter,
+//   ChevronDown,
+//   Search,
+//   LayoutGrid,
+//   SlidersHorizontal,
+//   List,
+// } from "lucide-react";
+// import { ShopRepo } from "../../data/repo/ShopRepo";
+// import { domain } from "../../store";
+
+// export default function ShopPage() {
+//   const [cats, setCats] = useState([
+//     { id: 1, name: "Male", products: 10 },
+//     { id: 2, name: "Female", products: 20 },
+//   ]);
+//   const [productsTotal, setProductsTotal] = useState(0);
+//   const [productPerPage, setProductPerPage] = useState(5);
+//   const [selectedCategories, setSelectedCategories] = useState([]);
+//   const [activePage, setActivePage] = useState(1);
+//   const [allProducts, setAllProducts] = useState({ total: 0, data: [] });
+//   const [loading, setLoading] = useState(true);
+//   const [sortBy, setSortBy] = useState("name");
+//   const [sortOrder, setSortOrder] = useState("asc");
+
+//   // Fetch products when page, size, sort or filters change
+//   // In your useEffect that fetches products
+// // This useEffect will refresh the data when any of these values change
+// useEffect(() => {
+//   setLoading(true);
+//   ShopRepo.products_index(activePage, productPerPage, sortBy, sortOrder, selectedCategories)
+//     .then((res) => {
+//       setAllProducts(res);
+//       setProductsTotal(res.total || 0);
+//       setLoading(false);
+//     })
+//     .catch(err => {
+//       console.error("Error fetching products:", err);
+//       setLoading(false);
+//     });
+// }, [activePage, productPerPage, sortBy, sortOrder, selectedCategories]);
+//   // Handle category change (checkbox filters)
+//   const handleCategoryChange = (categoryName) => {
+//     setSelectedCategories((prev) => {
+//       if (prev.includes(categoryName)) {
+//         return prev.filter((category) => category !== categoryName);
+//       } else {
+//         return [...prev, categoryName];
+//       }
+//     });
+//     setActivePage(1); // Reset to first page when changing filters
+//   };
+
+//   // Handle sort change
+//   const handleSortChange = (e) => {
+//     const value = e.target.value;
+
+//     switch (value) {
+//       case "name-asc":
+//         setSortBy("name");
+//         setSortOrder("asc");
+//         break;
+//       case "name-desc":
+//         setSortBy("name");
+//         setSortOrder("desc");
+//         break;
+//       case "price-asc":
+//         setSortBy("price");
+//         setSortOrder("asc");
+//         break;
+//       case "price-desc":
+//         setSortBy("price");
+//         setSortOrder("desc");
+//         break;
+//       default:
+//         setSortBy("name");
+//         setSortOrder("asc");
+//     }
+//     setActivePage(1); // Reset to first page when changing sort
+//   };
+
+//   return (
+//     <>
+//       {/* Hero Section with Breadcrumb */}
+//       <div className="container-fluid bg-light py-4 mb-4">
+//         <div className="container">
+//           <div className="row align-items-center">
+//             <div className="col-md-8">
+//               <nav aria-label="breadcrumb">
+//                 <ol className="breadcrumb mb-0">
+//                   <li className="breadcrumb-item">
+//                     <Link
+//                       to="/"
+//                       className="text-decoration-none d-flex align-items-center"
+//                     >
+//                       <Home size={14} className="me-1" />
+//                       <span>Home</span>
+//                     </Link>
+//                   </li>
+//                   <li className="breadcrumb-item active fw-medium d-flex align-items-center">
+//                     <ShoppingBag size={14} className="me-1" />
+//                     <span>Shop</span>
+//                   </li>
+//                   <li
+//                     className="breadcrumb-item active fw-medium d-flex align-items-center"
+//                     aria-current="page"
+//                   >
+//                     Collection
+//                   </li>
+//                 </ol>
+//               </nav>
+//             </div>
+//             <div className="col-md-4 d-none d-md-block">
+//               <div className="text-end d-flex align-items-center justify-content-end">
+//                 <Filter size={16} className="text-muted me-2" />
+//                 <p className="text-muted mb-0">
+//                   Showing <span className="fw-medium">{productsTotal}</span>{" "}
+//                   products
+//                 </p>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Mobile Category Filter */}
+//       <div className="container d-md-none mb-4">
+//         <div className="card shadow-sm border-0">
+//           <div className="card-body p-0">
+//             <button
+//               className="btn w-100 d-flex justify-content-between align-items-center p-3"
+//               type="button"
+//               data-bs-toggle="collapse"
+//               data-bs-target="#mobileCategoryFilters"
+//             >
+//               <span className="fw-medium">Filter by Category</span>
+//               <ChevronDown size={16} />
+//             </button>
+//             <div className="collapse border-top" id="mobileCategoryFilters">
+//               <div className="p-3">
+//                 <div className="position-relative mb-3">
+//                   <input
+//                     type="search"
+//                     placeholder="Search categories"
+//                     className="form-control form-control-sm rounded-pill ps-4 pe-4"
+//                   />
+//                   <Search
+//                     size={14}
+//                     className="position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"
+//                   />
+//                 </div>
+//                 <div className="row g-2">
+//                   {cats &&
+//                     Array.isArray(cats) &&
+//                     cats.map((el) => {
+//                       const categoryProductCount =
+//                         allProducts.data && Array.isArray(allProducts.data)
+//                           ? allProducts.data.filter(
+//                               (product) => product.category === el.name
+//                             ).length
+//                           : 0;
+
+//                       return (
+//                         <div key={el.id} className="col-6">
+//                           <div className="form-check d-flex align-items-center gap-2">
+//                             <input
+//                               type="checkbox"
+//                               id={`mobile-cat-${el.id}`}
+//                               className="form-check-input"
+//                               checked={selectedCategories.includes(el.name)}
+//                               onChange={() => handleCategoryChange(el.name)}
+//                             />
+//                             <label
+//                               className="form-check-label d-flex align-items-center gap-2"
+//                               htmlFor={`mobile-cat-${el.id}`}
+//                             >
+//                               <span>{el.name}</span>
+//                               <span className="badge bg-secondary rounded-pill">
+//                                 {categoryProductCount}
+//                               </span>
+//                             </label>
+//                           </div>
+//                         </div>
+//                       );
+//                     })}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Main Content */}
+//       <div className="container mb-5">
+//         <div className="row g-4">
+//           {/* Sidebar - Categories */}
+//           <div className="col-md-3 d-none d-md-block">
+//             <div
+//               className="card shadow-sm border-0 sticky-md-top"
+//               id={styles.categoriesCard}
+//             >
+//               <div className="card-header bg-white border-0 py-3">
+//                 <h5 className="mb-0 fw-bold">Categories</h5>
+//               </div>
+//               <div className="card-body">
+//                 <div className="position-relative mb-3">
+//                   <input
+//                     type="search"
+//                     placeholder="Search categories"
+//                     className="form-control form-control-sm rounded-pill ps-4 pe-4"
+//                   />
+//                   <Search
+//                     size={14}
+//                     className="position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"
+//                   />
+//                 </div>
+//                 <div className="d-flex flex-column gap-2 mt-3">
+//                   {cats &&
+//                     Array.isArray(cats) &&
+//                     cats.map((el) => (
+//                       <div
+//                         key={el.id}
+//                         className="form-check d-flex align-items-center"
+//                       >
+//                         <input
+//                           type="checkbox"
+//                           className="form-check-input me-2"
+//                           id={`cat-${el.id}`}
+//                           checked={selectedCategories.includes(el.name)}
+//                           onChange={() => handleCategoryChange(el.name)}
+//                         />
+//                         <label
+//                           className="form-check-label d-flex w-100 justify-content-between"
+//                           htmlFor={`cat-${el.id}`}
+//                         >
+//                           <span>{el.name}</span>
+//                           <span className="badge bg-light text-dark rounded-pill">
+//                             {el.products}
+//                           </span>
+//                         </label>
+//                       </div>
+//                     ))}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Products Section */}
+//           <div className="col-md-9">
+//             {/* Products Header */}
+//             <div className="card shadow-sm border-0 mb-4">
+//               <div className="card-body p-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
+//                 <div className="d-flex align-items-center">
+//                   <div className="me-3">
+//                     <p className="mb-0 text-muted small d-block d-md-none">
+//                       Showing {productsTotal} products
+//                     </p>
+//                     <div className="d-flex align-items-center gap-2">
+//                       <span className="d-none d-md-inline fw-medium">
+//                         View:
+//                       </span>
+//                       <div className="btn-group" role="group">
+//                         <button
+//                           type="button"
+//                           className="btn btn-sm btn-outline-secondary active d-flex align-items-center justify-content-center"
+//                           aria-label="Grid view"
+//                         >
+//                           <LayoutGrid size={16} />
+//                         </button>
+//                         <button
+//                           type="button"
+//                           className="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center"
+//                           aria-label="List view"
+//                         >
+//                           <List size={16} />
+//                         </button>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </div>
+//                 <div className="d-flex align-items-center gap-2">
+//                   <div className="d-flex align-items-center">
+//                     <SlidersHorizontal size={16} className="text-muted me-2" />
+//                     <label htmlFor="sort-by" className="me-2 text-muted mb-0">
+//                       Sort by:
+//                     </label>
+//                   </div>
+//                   <div className={`${styles.selectWrapper} position-relative`}>
+//                     <select
+//                       id="sort-by"
+//                       className={`form-select form-select-sm rounded-pill ${styles.select} pe-4`}
+//                       value={`${sortBy}-${sortOrder}`}
+//                       onChange={handleSortChange}
+//                     >
+//                       <option value="name-asc">Name: A to Z</option>
+//                       <option value="name-desc">Name: Z to A</option>
+//                       <option value="price-asc">Price: Low to High</option>
+//                       <option value="price-desc">Price: High to Low</option>
+//                     </select>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Products Grid */}
+//             {loading ? (
+//               <div className="text-center py-5">
+//                 <div className="spinner-border" role="status">
+//                   <span className="visually-hidden">Loading...</span>
+//                 </div>
+//               </div>
+//             ) : (
+//               <div className="row g-4">
+//                 {allProducts.data &&
+//                 Array.isArray(allProducts.data) &&
+//                 allProducts.data.length > 0 ? (
+//                   allProducts.data.map((el) => (
+//                     <div key={el.id} className="col-12 col-sm-6 col-lg-4">
+//                       <ProductCard
+//                         title={el.title}
+//                         price={el.price}
+//                         discount_price={el.discount_price}
+//                         imgUrl={el.image1}
+//                       />
+//                     </div>
+//                   ))
+//                 ) : (
+//                   <div className="col-12">
+//                     <div className="card shadow-sm border-0 py-5">
+//                       <div className="card-body text-center">
+//                         <i className="bi bi-search display-1 text-muted mb-3"></i>
+//                         <h3>No products found</h3>
+//                         <p className="text-muted">
+//                           Try adjusting your search or filter to find what
+//                           you're looking for.
+//                         </p>
+//                         <button
+//                           className="btn btn-outline-dark rounded-pill px-4 mt-2"
+//                           onClick={() => setSelectedCategories([])}
+//                         >
+//                           Clear all filters
+//                         </button>
+//                       </div>
+//                     </div>
+//                   </div>
+//                 )}
+//               </div>
+//             )}
+
+//             {/* Pagination */}
+//             {!loading && allProducts.data && allProducts.data.length > 0 && (
+//               <div className="card shadow-sm border-0 mt-4">
+//                 <div className="card-body p-3">
+//                   <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+//                     <nav aria-label="Product pagination">
+//                       <ul className="pagination pagination-sm mb-0 flex-wrap justify-content-center">
+//                         {activePage > 1 && (
+//                           <li className="page-item">
+//                             <a
+//                               className="page-link rounded-start"
+//                               aria-label="Previous"
+//                               onClick={(e) => {
+//                                 e.preventDefault();
+//                                 setActivePage(activePage - 1);
+//                               }}
+//                               href="#"
+//                             >
+//                               <span aria-hidden="true">&laquo;</span>
+//                             </a>
+//                           </li>
+//                         )}
+//                         {Array(Math.ceil(productsTotal / productPerPage))
+//                           .fill(0)
+//                           .map((_, index) => (
+//                             <li
+//                               key={index}
+//                               className={`page-item ${
+//                                 activePage === index + 1 ? "active" : ""
+//                               }`}
+//                             >
+//                               <a
+//                                 className="page-link"
+//                                 href="#"
+//                                 onClick={(e) => {
+//                                   e.preventDefault();
+//                                   setActivePage(index + 1);
+//                                 }}
+//                               >
+//                                 {index + 1}
+//                               </a>
+//                             </li>
+//                           ))}
+
+//                         {activePage <
+//                           Math.ceil(productsTotal / productPerPage) && (
+//                           <li className="page-item">
+//                             <a
+//                               className="page-link rounded-end"
+//                               aria-label="Next"
+//                               onClick={(e) => {
+//                                 e.preventDefault();
+//                                 setActivePage(activePage + 1);
+//                               }}
+//                               href="#"
+//                             >
+//                               <span aria-hidden="true">&raquo;</span>
+//                             </a>
+//                           </li>
+//                         )}
+//                       </ul>
+//                     </nav>
+//                     <div className="d-flex align-items-center">
+//                       <label
+//                         htmlFor="items-per-page"
+//                         className="me-2 text-muted mb-0"
+//                       >
+//                         Show:
+//                       </label>
+//                       <select
+//                         id="items-per-page"
+//                         value={productPerPage}
+//                         className={`form-select form-select-sm rounded-pill ${styles.select}`}
+//                         onChange={(e) => {
+//                           const newPageSize = parseInt(e.target.value);
+//                           setProductPerPage(newPageSize);
+//                           setActivePage(1); // Reset to first page when changing items per page
+//                         }}
+//                       >
+//                         <option value="5">5</option>
+//                         <option value="10">10</option>
+//                         <option value="20">20</option>
+//                         <option value="50">50</option>
+//                         <option value="100">100</option>
+//                       </select>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// }
+//////////////////////////////////////////////
