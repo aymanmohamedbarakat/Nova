@@ -1,23 +1,48 @@
-import React from "react";
+// Modify pages/ProductCard/index.jsx
+
+import React, { useState } from "react";
 import { CiHeart, CiShoppingCart } from "react-icons/ci";
 import { Link } from "react-router-dom";
-import { useDetails } from "../../store";
 import styles from "./index.module.css";
+import { useCart, useWishlist } from "../../store"; // Import the cart store
 
 export default function ProductCard({
-  id,
+  product_id,
   title,
   price,
   imgUrl,
   discount_price,
 }) {
-  const { setActiveDetailsId } = useDetails();
+  const { addToCart } = useCart(); // Get the addToCart function
+  const [isAdding, setIsAdding] = useState(false);
+  const { addToWishlist, isInWishlist } = useWishlist();
+  const isWishlisted = isInWishlist(product_id);
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    if (isAdding) return;
+    setIsAdding(true);
 
-  const handleShowDetails = (id) => {
-    console.log("Product ID being passed:", id); // Log the product ID being passed
-    if (!id) return; 
-    setActiveDetailsId(id);
+    addToCart(
+      { id: product_id, title, price, discount_price, image1: imgUrl },
+      1
+    );
+    setTimeout(() => setIsAdding(false), 500); // Reset after short delay
   };
+
+  // Handle add to cart
+  // const handleAddToCart = (e) => {
+  //   e.stopPropagation();
+  //   addToCart({
+  //     id: product_id,
+  //     title,
+  //     price,
+  //     discount_price,
+  //     image1: imgUrl,
+  //   }, 1);
+
+  //   // Show feedback that item was added
+  //   // alert(`Added ${title} to your cart!`);
+  // };
 
   return (
     <div className="col-12 col-sm-6 col-lg-4">
@@ -32,11 +57,24 @@ export default function ProductCard({
             className={styles.productImage}
           />
           <div className={styles.overlay}>
-            <button className={styles.actionButton}>
+            <button className={styles.actionButton} onClick={handleAddToCart}>
               <CiShoppingCart />
             </button>
-            <button className={styles.actionButton}>
-              <CiHeart />
+            <button
+              className={styles.actionButton}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!isWishlisted)
+                  addToWishlist({
+                    id: product_id,
+                    title,
+                    price,
+                    discount_price,
+                    image1: imgUrl,
+                  });
+              }}
+            >
+              <CiHeart color={isWishlisted ? "red" : "black"} />
             </button>
           </div>
 
@@ -51,14 +89,17 @@ export default function ProductCard({
               <span className={styles.originalPrice}>${price}</span>
             )}
           </div>
-          <Link
-            to={`/shop/product/${id}`}
-            onClick={() => handleShowDetails(id)}
-          >
-            <button className={`btn w-100 ${styles.ShowDetails}`}>
-              Show Details
+          {product_id ? (
+            <Link to={`/products/${product_id}`}>
+              <button className={`btn w-100 ${styles.ShowDetails}`}>
+                Show Details
+              </button>
+            </Link>
+          ) : (
+            <button disabled className={`btn w-100 ${styles.ShowDetails}`}>
+              No ID Available
             </button>
-          </Link>
+          )}
         </div>
       </div>
     </div>

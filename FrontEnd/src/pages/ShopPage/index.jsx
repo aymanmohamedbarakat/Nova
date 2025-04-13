@@ -25,16 +25,11 @@ export default function ShopPage() {
   const [activePage, setActivePage] = useState(1);
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Get Product From Api
   useEffect(() => {
-    // console.log(
-    //   "Fetching products for page:",
-    //   activePage,
-    //   "with",
-    //   productPerPage,
-    //   "per page"
-    // );
+
     ShopRepo.products_index(activePage, productPerPage).then((result) => {
       console.log("API Result:", result);
       setAllProducts(result.data);
@@ -44,39 +39,29 @@ export default function ShopPage() {
         setProductsTotal(result.total);
       }
 
-      // console.log("Total products:", result.total);
-      // console.log(
-      //   "Pages calculation:",
-      //   Math.ceil(result.total / productPerPage)
-      // );
     });
   }, [activePage, productPerPage]);
 
   useEffect(() => {
     if (!Array.isArray(allProducts)) return;
-
-    // console.log("Selected categories:", selectedCategories);
-
     if (selectedCategories.length === 0) {
       setFilteredProducts(allProducts);
-      // استخدم productsTotal الأصلي وليس طول المصفوفة
-      // console.log("Using original total:", productsTotal);
     } else {
       const filtered = allProducts.filter((product) =>
         selectedCategories.includes(product.category)
       );
       setFilteredProducts(filtered);
       setProductsTotal(filtered.length);
-      // console.log("Using filtered total:", filtered.length);
     }
   }, [selectedCategories, allProducts]);
+
 
   useEffect(() => {
     ShopRepo.getAllProducts().then((allProductsData) => {
       if (allProductsData && Array.isArray(allProductsData)) {
         const updatedCats = cats.map((el) => {
           const count = allProductsData.filter(
-            (product) => product.el === el.name
+            (product) => product.category === el.name
           ).length;
 
           return {
@@ -88,7 +73,7 @@ export default function ShopPage() {
         setCats(updatedCats);
       }
     });
-  }, []);
+  }, [allProducts]); 
 
   useEffect(() => {
     setActivePage(1);
@@ -234,35 +219,43 @@ export default function ShopPage() {
                     type="search"
                     placeholder="Search categories"
                     className="form-control form-control-sm rounded-pill ps-4 pe-4"
+                    value={searchQuery} 
+                    onChange={(e) => setSearchQuery(e.target.value)} 
                   />
                   <i className="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted small"></i>
                 </div>
                 <div className="d-flex flex-column gap-2 mt-3">
                   {cats &&
                     Array.isArray(cats) &&
-                    cats.map((el) => (
-                      <div
-                        key={el.id}
-                        className="form-check d-flex align-items-center"
-                      >
-                        <input
-                          type="checkbox"
-                          className="form-check-input me-2"
-                          id={`cat-${el.id}`}
-                          checked={selectedCategories.includes(el.name)}
-                          onChange={() => handleCategoryChange(el.name)}
-                        />
-                        <label
-                          className="form-check-label d-flex w-100 justify-content-between"
-                          htmlFor={`cat-${el.id}`}
+                    cats.map((el) => {
+                      const categoryProductCount = allProducts.filter(
+                        (product) => product.category === el.name
+                      ).length;
+
+                      return (
+                        <div
+                          key={el.id}
+                          className="form-check d-flex align-items-center"
                         >
-                          <span>{el.name}</span>
-                          <span className="badge bg-light text-dark rounded-pill">
-                            {el.products}
-                          </span>
-                        </label>
-                      </div>
-                    ))}
+                          <input
+                            type="checkbox"
+                            className="form-check-input me-2"
+                            id={`cat-${el.id}`}
+                            checked={selectedCategories.includes(el.name)}
+                            onChange={() => handleCategoryChange(el.name)}
+                          />
+                          <label
+                            className="form-check-label d-flex w-100 justify-content-between"
+                            htmlFor={`cat-${el.id}`}
+                          >
+                            <span>{el.name}</span>
+                            <span className="badge bg-light text-dark rounded-pill">
+                              {categoryProductCount}
+                            </span>
+                          </label>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             </div>
@@ -290,37 +283,11 @@ export default function ShopPage() {
                         >
                           <LayoutGrid size={16} />
                         </button>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center"
-                          aria-label="List view"
-                        >
-                          <List size={16} />
-                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="d-flex align-items-center gap-2">
-                  <div className="d-flex align-items-center">
-                    <SlidersHorizontal size={16} className="text-muted me-2" />
-                    <label htmlFor="sort-by" className="me-2 text-muted mb-0">
-                      Sort by:
-                    </label>
-                  </div>
-                  <div className={`${styles.selectWrapper} position-relative`}>
-                    <select
-                      id="sort-by"
-                      className={`form-select form-select-sm rounded-pill ${styles.select} pe-4`}
-                    >
-                      <option value="featured">Featured</option>
-                      <option value="name-asc">Name: A to Z</option>
-                      <option value="name-desc">Name: Z to A</option>
-                      <option value="price-asc">Price: Low to High</option>
-                      <option value="price-desc">Price: High to Low</option>
-                    </select>
-                  </div>
-                </div>
+
               </div>
             </div>
 
@@ -332,6 +299,7 @@ export default function ShopPage() {
                 filteredProducts.map((el) => (
                   <ProductCard
                     key={el.id}
+                    product_id={el.id}
                     title={el.title}
                     price={el.price}
                     discount_price={el.discount_price}
