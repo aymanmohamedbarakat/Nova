@@ -38,7 +38,7 @@ export default function Category() {
                   <h3 className={`${styles.categoryTitle} fs-5 fs-md-4`}>
                     {el.title}
                   </h3>
-                  <Link to={"/shop"}>
+                  <Link to={"/products"}>
                     <button className={`${styles.shopButton} px-3 py-2`}>
                       Shop Now
                     </button>

@@ -105,7 +105,7 @@ export default function NewArrivals() {
         {arrival.map((item) => (
           <SwiperSlide key={item.id}>
             <div className={styles.categoryCard}>
-              <Link to={"/shop"} className={styles.categoryLink}>
+              <Link to={"/products"} className={styles.categoryLink}>
                 <div className={styles.imageContainer}>
                   <img
                     src={item.image}
@@ -141,7 +141,7 @@ export default function NewArrivals() {
                   4 Step skincare for Brighter, Smoother, Younger looking skin
                 </p>
                 <button className="btn btn-light ">
-                  <Link className="nav-link" to={"/shop"}>
+                  <Link className="nav-link" to={"/products"}>
                     buy now - <span>$193.77</span>
                   </Link>
                 </button>
@@ -158,7 +158,7 @@ export default function NewArrivals() {
                   Contains 4% Niacinamide & 100% natural Hyaluronic acid
                 </p>
                 <button className="btn btn-light ">
-                  <Link className="nav-link" to={"/shop"}>
+                  <Link className="nav-link" to={"/products"}>
                     buy now - <span>$193.77</span>
                   </Link>
                 </button>

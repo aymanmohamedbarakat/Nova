@@ -147,7 +147,7 @@
 //   );
 // }
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import HomePage from "./pages/HomePage";
@@ -162,10 +162,22 @@ import RegisterPage from "./components/RegisterComponent";
 import MainLayout from "./layout/MainLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import GuestRoute from "./components/GuestRoute";
-
+import { useAuth } from "./store";
 
 export default function App() {
+  const { checkAuth, isAuthenticated } = useAuth();
+  
+  // This effect runs once when the app initializes
+  useEffect(() => {
+    // Check if user is authenticated when app loads
+    const verifyAuthentication = async () => {
+      await checkAuth();
+    };
+    
+    verifyAuthentication();
+  }, []);
   return (
+    
     <Routes>
       {/* Routes with layout */}
       <Route element={<MainLayout />}>

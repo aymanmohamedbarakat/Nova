@@ -620,7 +620,6 @@ export const useCart = create((set, get) => ({
   cartItems: [],
   totalItems: 0,
   totalPrice: 0,
-
   // Initialize cart from localStorage if available
   initCart: () => {
     const savedCart = localStorage.getItem("userCart");
@@ -637,7 +636,6 @@ export const useCart = create((set, get) => ({
       }
     }
   },
-
   // Save cart to localStorage
   saveCart: () => {
     const { cartItems, totalItems, totalPrice } = get();
@@ -650,13 +648,11 @@ export const useCart = create((set, get) => ({
       })
     );
   },
-
   addToCart: (product, quantity = 1) =>
     set((state) => {
       // Check if item already exists in cart
       const existingItemIndex = state.cartItems.findIndex((item) => item.id === product.id);
       const newCartItems = [...state.cartItems];
-
       if (existingItemIndex >= 0) {
         // Update quantity if item exists
         newCartItems[existingItemIndex] = {
@@ -667,83 +663,69 @@ export const useCart = create((set, get) => ({
         // Add new item to cart
         newCartItems.push({ ...product, quantity });
       }
-
       // Calculate new totals
       const newTotalItems = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
       const newTotalPrice = newCartItems.reduce((sum, item) => {
         const price = item.discount_price || item.price;
         return sum + price * item.quantity;
       }, 0);
-
       const newState = {
         cartItems: newCartItems,
         totalItems: newTotalItems,
         totalPrice: newTotalPrice,
       };
-
       // Save to localStorage
       localStorage.setItem("userCart", JSON.stringify(newState));
-
       return newState;
     }),
-
   removeFromCart: (productId) =>
     set((state) => {
       const newCartItems = state.cartItems.filter((item) => item.id !== productId);
-
       // Calculate new totals
       const newTotalItems = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
       const newTotalPrice = newCartItems.reduce((sum, item) => {
         const price = item.discount_price || item.price;
         return sum + price * item.quantity;
       }, 0);
-
       const newState = {
         cartItems: newCartItems,
         totalItems: newTotalItems,
         totalPrice: newTotalPrice,
       };
-
       // Save to localStorage
       localStorage.setItem("userCart", JSON.stringify(newState));
-
       return newState;
     }),
-
   updateQuantity: (productId, quantity) =>
     set((state) => {
       // Update quantity for specific item
       const newCartItems = state.cartItems.map((item) =>
         item.id === productId ? { ...item, quantity: quantity } : item
       );
-
       // Calculate new totals
       const newTotalItems = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
       const newTotalPrice = newCartItems.reduce((sum, item) => {
         const price = item.discount_price || item.price;
         return sum + price * item.quantity;
       }, 0);
-
       const newState = {
         cartItems: newCartItems,
         totalItems: newTotalItems,
         totalPrice: newTotalPrice,
       };
-
       // Save to localStorage
       localStorage.setItem("userCart", JSON.stringify(newState));
-
       return newState;
     }),
-
-  clearCart: () => {
-    localStorage.removeItem("userCart");
-    return {
-      cartItems: [],
-      totalItems: 0,
-      totalPrice: 0,
-    };
-  },
+  clearCart: () => 
+    set(() => {
+      localStorage.removeItem("userCart");
+      return {
+        cartItems: [],
+        totalItems: 0,
+        totalPrice: 0,
+      };
+    })
 }));
 
 // Updated Wishlist store with API integration
@@ -819,12 +801,17 @@ export const useWishlist = create((set, get) => ({
   clearWishlist: () => set({ wishlistItems: [] }),
 }));
 
-// Authentication store
+// Update to the useAuth store
 export const useAuth = create((set) => ({
   user: null,
   isAuthenticated: false,
   isLoading: false,
   error: null,
+  
+  // Add isAdmin computed property
+  get isAdmin() {
+    return this.user?.isAdmin === true;
+  },
   
   login: async (username, password) => {
     set({ isLoading: true, error: null });
@@ -909,61 +896,89 @@ export const useAuth = create((set) => ({
     });
   },
   
-  checkAuth: async () => {
-    set({ isLoading: true });
-    const token = localStorage.getItem('authToken');
+// Update the checkAuth function in your useAuth store
+checkAuth: async () => {
+  const token = localStorage.getItem('authToken');
+  
+  if (!token) {
+    set({ 
+      isLoading: false, 
+      isAuthenticated: false, 
+      user: null 
+    });
+    return false;
+  }
+  
+  set({ isLoading: true });
+  
+  try {
+    // Verify token and get user data
+    const userData = await ShopRepo.verifyAuth();
     
-    if (!token) {
-      set({ isLoading: false, isAuthenticated: false, user: null });
-      return false;
-    }
+    set({
+      user: userData,
+      isAuthenticated: true,
+      isLoading: false,
+      error: null
+    });
     
-    try {
-      // Verify token and get user data
-      const userData = await ShopRepo.verifyAuth();
-      
-      set({
-        user: userData,
-        isAuthenticated: true,
-        isLoading: false,
-        error: null
-      });
-      
-      // Initialize user data
-      useWishlist.getState().fetchWishlist();
-      
-      return true;
-    } catch (error) {
-      // Token invalid or expired
+    // Initialize user data
+    useWishlist.getState().fetchWishlist();
+    
+    return true;
+  } catch (error) {
+    console.error("Auth check failed:", error);
+    
+    // Only clear token if it's specifically an authentication error
+    // (e.g., 401 Unauthorized)
+    if (error?.response?.status === 401) {
       localStorage.removeItem('authToken');
-      
-      set({
-        user: null,
-        isAuthenticated: false,
-        isLoading: false,
-        error: "Session expired, please login again"
-      });
-      
-      return false;
     }
-  },
+    
+    set({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      // Don't show error to user unless it's specifically needed
+      error: null
+    });
+    
+    return false;
+  }
+},
   
   updateProfile: async (profileData) => {
     set({ isLoading: true, error: null });
     try {
-      const updatedUser = await ShopRepo.updateProfile(profileData); // استخدم الدالة المناسبة في الـ API
+      // Using direct axios call since ShopRepo.updateProfile is commented out
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("No auth token found");
+      }
+
+      const response = await axios.put(
+        `${domain}/update-profile`,
+        profileData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
       set({
-        user: updatedUser,
+        user: response.data,
         isLoading: false
       });
       return true;
     } catch (error) {
       set({
         isLoading: false,
-        error: error.response?.data?.message || error.message || "فشل في تحديث البيانات"
+        error: error.response?.data?.message || error.message || "Failed to update profile"
       });
       return false;
     }
   },
+  
   clearError: () => set({ error: null })
 }));
